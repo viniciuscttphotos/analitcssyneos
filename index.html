@@ -18,6 +18,7 @@
             --navy: #0f172a;
             --navy-deep: #020617;
             --blue: #14213d;
+            --secondary: #14213d;
             --gold: #c9a227;
             --gold-soft: #f2d37b;
             --paper: #f7f5ee;
@@ -36,6 +37,7 @@
             color: var(--ink);
             line-height: 1.7;
             position: relative;
+            overflow-x: hidden;
         }
 
         body::before {
@@ -140,7 +142,7 @@
 
         .summary-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: 1fr;
             gap: 22px;
         }
 
@@ -194,7 +196,7 @@
 
         .channels-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            grid-template-columns: 1fr;
             gap: 20px;
         }
 
@@ -238,13 +240,20 @@
             color: var(--muted);
             font-size: 0.95rem;
             line-height: 1.75;
+            text-align: left;
+            display: inline-block;
+        }
+
+        .channel-status i {
+            margin-right: 6px;
+            color: var(--gold);
         }
 
         .charts-container {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            grid-template-columns: 1fr;
             gap: 30px;
-            padding: 30px;
+            padding: 20px;
         }
 
         .chart-wrapper {
@@ -262,7 +271,7 @@
 
         .swot-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: 1fr;
             gap: 20px;
         }
 
@@ -331,7 +340,7 @@
 
         .timeline-items {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            grid-template-columns: 1fr;
             gap: 16px;
         }
 
@@ -429,7 +438,10 @@
         }
 
         .cta-button {
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
             background: var(--gold);
             color: var(--navy-deep);
             padding: 14px 32px;
@@ -438,11 +450,39 @@
             text-decoration: none;
             transition: transform 0.2s ease, box-shadow 0.2s ease;
             box-shadow: 0 10px 25px rgba(201, 162, 39, 0.2);
+            border: 0;
+            cursor: pointer;
+            width: 100%;
+            max-width: 320px;
         }
 
         .cta-button:hover {
             transform: translateY(-2px);
             box-shadow: 0 14px 30px rgba(201, 162, 39, 0.25);
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 700;
+            padding: 4px 8px;
+            border-radius: 999px;
+        }
+
+        .status-positive {
+            color: var(--success);
+            background: rgba(15, 118, 110, 0.12);
+        }
+
+        .status-warning {
+            color: var(--warning);
+            background: rgba(146, 64, 14, 0.12);
+        }
+
+        .status-danger {
+            color: var(--danger);
+            background: rgba(180, 83, 9, 0.12);
         }
 
         footer {
@@ -452,6 +492,63 @@
             padding: 28px 20px;
             margin-top: 60px;
             border-top: 1px solid rgba(255,255,255,0.08);
+        }
+
+        @media (min-width: 768px) {
+            .summary-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .channels-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .charts-container {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                padding: 30px;
+            }
+
+            .swot-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .timeline-items {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            header {
+                padding: 112px 24px 124px;
+            }
+
+            section {
+                margin: 84px 0;
+            }
+
+            .cta-section {
+                padding: 60px 32px;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .summary-grid {
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+            }
+
+            .channels-grid {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+
+            .swot-grid {
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+            }
+
+            .timeline-items {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+
+            .chart-wrapper {
+                height: 340px;
+            }
         }
 
         @media (max-width: 768px) {
@@ -474,6 +571,40 @@
 
             .cta-section {
                 padding: 42px 20px;
+            }
+
+            table, thead, tbody, th, td, tr {
+                display: block;
+            }
+
+            thead {
+                display: none;
+            }
+
+            tbody tr {
+                padding: 8px 0;
+                border-bottom: 1px solid var(--line);
+            }
+
+            td {
+                padding: 10px 16px 10px 42%;
+                position: relative;
+                border-bottom: none;
+                word-break: break-word;
+            }
+
+            td::before {
+                content: attr(data-label);
+                position: absolute;
+                left: 16px;
+                top: 10px;
+                width: 34%;
+                font-weight: 700;
+                color: var(--navy);
+            }
+
+            tbody tr:last-child {
+                border-bottom: none;
             }
         }
 
@@ -535,10 +666,10 @@
                         <div class="score-circle score-excellent">8/10</div>
                     </div>
                     <div class="channel-status">
-                        ✓ Excelente reputação<br>
-                        ✓ NAP consistente<br>
-                        ⚠️ Reviews negativas sem resposta<br>
-                        ⚠️ Baixo volume relativo
+                        <i class="fa-solid fa-circle-check"></i> Excelente reputação<br>
+                        <i class="fa-solid fa-circle-check"></i> NAP consistente<br>
+                        <i class="fa-solid fa-circle-exclamation"></i> Reviews negativas sem resposta<br>
+                        <i class="fa-solid fa-circle-exclamation"></i> Baixo volume relativo
                     </div>
                 </div>
 
@@ -548,10 +679,10 @@
                         <div class="score-circle score-medium">5/10</div>
                     </div>
                     <div class="channel-status">
-                        ✓ Conteúdo técnico sólido<br>
-                        ⚠️ Frequência baixa (2-3/semana)<br>
-                        ⚠️ Reels sub-representados (~15%)<br>
-                        ⚠️ Genérico demais
+                        <i class="fa-solid fa-circle-check"></i> Conteúdo técnico sólido<br>
+                        <i class="fa-solid fa-circle-exclamation"></i> Frequência baixa (2-3/semana)<br>
+                        <i class="fa-solid fa-circle-exclamation"></i> Reels sub-representados (~15%)<br>
+                        <i class="fa-solid fa-circle-exclamation"></i> Genérico demais
                     </div>
                 </div>
 
@@ -561,10 +692,10 @@
                         <div class="score-circle score-medium">5/10</div>
                     </div>
                     <div class="channel-status">
-                        ✓ Design limpo<br>
-                        ✓ Texto profissional<br>
-                        ⚠️ Hero sem CTA<br>
-                        ⚠️ 6 links quebrados
+                        <i class="fa-solid fa-circle-check"></i> Design limpo<br>
+                        <i class="fa-solid fa-circle-check"></i> Texto profissional<br>
+                        <i class="fa-solid fa-circle-exclamation"></i> Hero sem CTA<br>
+                        <i class="fa-solid fa-circle-exclamation"></i> 6 links quebrados
                     </div>
                 </div>
 
@@ -574,10 +705,10 @@
                         <div class="score-circle score-poor">1/10</div>
                     </div>
                     <div class="channel-status">
-                        ✗ Página inacessível<br>
-                        ✗ Conteúdo não carrega<br>
-                        ✗ Risco reputacional<br>
-                        ⚠️ Ainda visitado por leads
+                        <i class="fa-solid fa-circle-xmark"></i> Página inacessível<br>
+                        <i class="fa-solid fa-circle-xmark"></i> Conteúdo não carrega<br>
+                        <i class="fa-solid fa-circle-xmark"></i> Risco reputacional<br>
+                        <i class="fa-solid fa-circle-exclamation"></i> Ainda visitado por leads
                     </div>
                 </div>
 
@@ -587,10 +718,10 @@
                         <div class="score-circle score-medium">5/10</div>
                     </div>
                     <div class="channel-status">
-                        ✓ Google ↔ Instagram<br>
-                        ⚠️ Site ≠ Outros canais<br>
-                        ⚠️ Proposta de valor diverge<br>
-                        ⚠️ Mensagem inconsistente
+                        <i class="fa-solid fa-circle-check"></i> Google ↔ Instagram<br>
+                        <i class="fa-solid fa-circle-exclamation"></i> Site ≠ Outros canais<br>
+                        <i class="fa-solid fa-circle-exclamation"></i> Proposta de valor diverge<br>
+                        <i class="fa-solid fa-circle-exclamation"></i> Mensagem inconsistente
                     </div>
                 </div>
 
@@ -600,10 +731,10 @@
                         <div class="score-circle score-poor">4.5/10</div>
                     </div>
                     <div class="channel-status">
-                        ✓ Bom no início (Google)<br>
-                        ⚠️ Piora no meio (Site)<br>
-                        ⚠️ Confiança reduzida<br>
-                        ✗ Perde força na decisão
+                        <i class="fa-solid fa-circle-check"></i> Bom no início (Google)<br>
+                        <i class="fa-solid fa-circle-exclamation"></i> Piora no meio (Site)<br>
+                        <i class="fa-solid fa-circle-exclamation"></i> Confiança reduzida<br>
+                        <i class="fa-solid fa-circle-xmark"></i> Perde força na decisão
                     </div>
                 </div>
             </div>
@@ -644,60 +775,60 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td><strong>Google Business</strong></td>
-                            <td>Total de Avaliações</td>
-                            <td>31</td>
-                            <td>60+</td>
-                            <td><span style="color: var(--warning);">⚠️ Abaixo</span></td>
+                            <td data-label="Canal"><strong>Google Business</strong></td>
+                            <td data-label="Métrica Chave">Total de Avaliações</td>
+                            <td data-label="Valor Atual">31</td>
+                            <td data-label="Benchmark Ideal">60+</td>
+                            <td data-label="Status"><span class="status-badge status-warning"><i class="fa-solid fa-circle-exclamation"></i> Abaixo</span></td>
                         </tr>
                         <tr>
-                            <td><strong>Google Business</strong></td>
-                            <td>Nota Média</td>
-                            <td>4.8★</td>
-                            <td>4.5★+</td>
-                            <td><span style="color: var(--success);">✓ Excelente</span></td>
+                            <td data-label="Canal"><strong>Google Business</strong></td>
+                            <td data-label="Métrica Chave">Nota Média</td>
+                            <td data-label="Valor Atual">4.8★</td>
+                            <td data-label="Benchmark Ideal">4.5★+</td>
+                            <td data-label="Status"><span class="status-badge status-positive"><i class="fa-solid fa-circle-check"></i> Excelente</span></td>
                         </tr>
                         <tr>
-                            <td><strong>Instagram</strong></td>
-                            <td>Frequência Semanal</td>
-                            <td>2-3 posts</td>
-                            <td>7+ posts</td>
-                            <td><span style="color: var(--danger);">✗ Crítico</span></td>
+                            <td data-label="Canal"><strong>Instagram</strong></td>
+                            <td data-label="Métrica Chave">Frequência Semanal</td>
+                            <td data-label="Valor Atual">2-3 posts</td>
+                            <td data-label="Benchmark Ideal">7+ posts</td>
+                            <td data-label="Status"><span class="status-badge status-danger"><i class="fa-solid fa-circle-xmark"></i> Crítico</span></td>
                         </tr>
                         <tr>
-                            <td><strong>Instagram</strong></td>
-                            <td>% de Reels</td>
-                            <td>~15%</td>
-                            <td>50-70%</td>
-                            <td><span style="color: var(--danger);">✗ Crítico</span></td>
+                            <td data-label="Canal"><strong>Instagram</strong></td>
+                            <td data-label="Métrica Chave">% de Reels</td>
+                            <td data-label="Valor Atual">~15%</td>
+                            <td data-label="Benchmark Ideal">50-70%</td>
+                            <td data-label="Status"><span class="status-badge status-danger"><i class="fa-solid fa-circle-xmark"></i> Crítico</span></td>
                         </tr>
                         <tr>
-                            <td><strong>Instagram</strong></td>
-                            <td>Seguidores</td>
-                            <td>780</td>
-                            <td>1500+ (6 meses)</td>
-                            <td><span style="color: var(--warning);">⚠️ Abaixo</span></td>
+                            <td data-label="Canal"><strong>Instagram</strong></td>
+                            <td data-label="Métrica Chave">Seguidores</td>
+                            <td data-label="Valor Atual">780</td>
+                            <td data-label="Benchmark Ideal">1500+ (6 meses)</td>
+                            <td data-label="Status"><span class="status-badge status-warning"><i class="fa-solid fa-circle-exclamation"></i> Abaixo</span></td>
                         </tr>
                         <tr>
-                            <td><strong>Site</strong></td>
-                            <td>Links Funcionais</td>
-                            <td>89%</td>
-                            <td>100%</td>
-                            <td><span style="color: var(--warning);">⚠️ Bugs</span></td>
+                            <td data-label="Canal"><strong>Site</strong></td>
+                            <td data-label="Métrica Chave">Links Funcionais</td>
+                            <td data-label="Valor Atual">89%</td>
+                            <td data-label="Benchmark Ideal">100%</td>
+                            <td data-label="Status"><span class="status-badge status-warning"><i class="fa-solid fa-circle-exclamation"></i> Bugs</span></td>
                         </tr>
                         <tr>
-                            <td><strong>Site</strong></td>
-                            <td>CTA na Hero</td>
-                            <td>0</td>
-                            <td>1+</td>
-                            <td><span style="color: var(--danger);">✗ Crítico</span></td>
+                            <td data-label="Canal"><strong>Site</strong></td>
+                            <td data-label="Métrica Chave">CTA na Hero</td>
+                            <td data-label="Valor Atual">0</td>
+                            <td data-label="Benchmark Ideal">1+</td>
+                            <td data-label="Status"><span class="status-badge status-danger"><i class="fa-solid fa-circle-xmark"></i> Crítico</span></td>
                         </tr>
                         <tr>
-                            <td><strong>Facebook</strong></td>
-                            <td>Acessibilidade</td>
-                            <td>Bloqueado</td>
-                            <td>Funcional</td>
-                            <td><span style="color: var(--danger);">✗ Crítico</span></td>
+                            <td data-label="Canal"><strong>Facebook</strong></td>
+                            <td data-label="Métrica Chave">Acessibilidade</td>
+                            <td data-label="Valor Atual">Bloqueado</td>
+                            <td data-label="Benchmark Ideal">Funcional</td>
+                            <td data-label="Status"><span class="status-badge status-danger"><i class="fa-solid fa-circle-xmark"></i> Crítico</span></td>
                         </tr>
                     </tbody>
                 </table>
@@ -829,7 +960,7 @@
                 </div>
 
                 <div class="timeline-group">
-                    <div class="timeline-title">🎯 Longo Prazo (90+ dias)</div>
+                    <div class="timeline-title"><i class="fa-solid fa-road"></i> Longo Prazo (90+ dias)</div>
                     <div class="timeline-items">
                         <div class="action-item">
                             <div class="action-title">Blog com SEO</div>
@@ -861,19 +992,19 @@
             <h2>Conclusões Principais</h2>
             <div class="summary-grid">
                 <div class="summary-card" style="border-left-color: var(--danger);">
-                    <h3>❌ O Problema Raiz</h3>
+                    <h3><i class="fa-solid fa-bullseye"></i> O Problema Raiz</h3>
                     <p>Infraestrutura de conversão desconectada de uma marca que funciona. Google confia, Instagram é sólido, mas o site (ponto de prova) é o elo mais fraco.</p>
                 </div>
                 <div class="summary-card" style="border-left-color: var(--warning);">
-                    <h3>🔧 Não é Criatividade</h3>
+                    <h3><i class="fa-solid fa-wrench"></i> Não é Criatividade</h3>
                     <p>A Syneos não precisa de mais conteúdo. Precisa de (1) consertar bugs técnicos, (2) aumentar frequência e mudar formato, e (3) unificar a mensagem.</p>
                 </div>
                 <div class="summary-card" style="border-left-color: var(--success);">
-                    <h3>✅ Oportunidade Real</h3>
+                    <h3><i class="fa-solid fa-lightbulb"></i> Oportunidade Real</h3>
                     <p>O setor em Curitiba é pouco sofisticado digitalmente. Ganhos de presença custam pouco e rendem posição de destaque relativamente rápido.</p>
                 </div>
                 <div class="summary-card" style="border-left-color: var(--secondary);">
-                    <h3>📊 Próximo Passo</h3>
+                    <h3><i class="fa-solid fa-route"></i> Próximo Passo</h3>
                     <p>Executar os ganhos rápidos (0-30 dias) em paralelo: site + Google + Instagram. Depois, estruturar SEO e conteúdo para captura orgânica.</p>
                 </div>
             </div>
@@ -883,7 +1014,7 @@
         <section class="cta-section">
             <h2>Pronto para Transformar a Presença Digital?</h2>
             <p>Este diagnóstico identifica os problemas. O próximo passo é a execução estratégica de cada recomendação, alinhada com o cronograma de prioridade.</p>
-            <button class="cta-button" onclick="abrirWhatsApp()">💬 Agendar Consultoria</button>
+            <button class="cta-button" onclick="abrirWhatsApp()"><i class="fa-brands fa-whatsapp"></i> Agendar Consultoria</button>
         </section>
     </main>
 
@@ -903,9 +1034,9 @@
                 datasets: [{
                     data: [29, 1, 1],
                     backgroundColor: [
-                        '#10b981',
-                        '#f59e0b',
-                        '#dc2626'
+                        '#0f766e',
+                        '#c9a227',
+                        '#b45309'
                     ],
                     borderColor: 'white',
                     borderWidth: 3
@@ -935,11 +1066,11 @@
                 datasets: [{
                     label: 'Score Atual',
                     data: [8, 5, 5, 1, 5, 4.5],
-                    borderColor: '#3b82f6',
-                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                    borderColor: '#14213d',
+                    backgroundColor: 'rgba(20, 33, 61, 0.12)',
                     borderWidth: 2,
                     pointRadius: 5,
-                    pointBackgroundColor: '#3b82f6',
+                    pointBackgroundColor: '#14213d',
                     pointBorderColor: '#fff',
                     pointBorderWidth: 2
                 }]
@@ -967,7 +1098,7 @@
         // WhatsApp Button
         function abrirWhatsApp() {
             const mensagem = "Olá! Gostaria de agendar uma consultoria sobre o diagnóstico de presença digital.";
-            const telefone = "5541999999999"; // Substituir pelo número real
+            const telefone = "5541997644023";
             const url = `https://wa.me/${telefone}?text=${encodeURIComponent(mensagem)}`;
             window.open(url, '_blank');
         }
