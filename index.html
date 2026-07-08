@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagnóstico Estratégico de Presença Digital - Syneos</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --navy: #0f172a;
+            --navy-deep: #020617;
+            --blue: #14213d;
+            --gold: #c9a227;
+            --gold-soft: #f2d37b;
+            --paper: #f7f5ee;
+            --white: #ffffff;
+            --ink: #1f2937;
+            --muted: #6b7280;
+            --line: #e5e7eb;
+            --success: #0f766e;
+            --danger: #b45309;
+            --warning: #92400e;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', Roboto, Arial, sans-serif;
+            background: linear-gradient(180deg, var(--paper) 0%, #f0ece1 100%);
+            color: var(--ink);
+            line-height: 1.7;
+            position: relative;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background-image: linear-gradient(rgba(15, 23, 42, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(15, 23, 42, 0.03) 1px, transparent 1px);
+            background-size: 24px 24px;
+            pointer-events: none;
+            opacity: 0.35;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        header {
+            position: relative;
+            background: linear-gradient(135deg, var(--navy-deep) 0%, var(--blue) 55%, #0b1d3a 100%);
+            color: var(--white);
+            padding: 96px 24px 110px;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at top right, rgba(201, 162, 39, 0.24), transparent 32%);
+            pointer-events: none;
+        }
+
+        header .container {
+            position: relative;
+            z-index: 1;
+        }
+
+        header h1 {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: clamp(2rem, 3vw, 3.1rem);
+            font-weight: 700;
+            letter-spacing: 0.02em;
+            margin-bottom: 14px;
+        }
+
+        header p {
+            font-size: 1.05rem;
+            opacity: 0.92;
+            margin-bottom: 24px;
+            max-width: 760px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .header-meta {
+            display: flex;
+            justify-content: center;
+            gap: 14px;
+            flex-wrap: wrap;
+            margin-top: 24px;
+        }
+
+        .header-meta span {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            backdrop-filter: blur(4px);
+            font-size: 0.95rem;
+        }
+
+        section {
+            margin: 72px 0;
+        }
+
+        section h2 {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 1.8rem;
+            color: var(--navy-deep);
+            margin-bottom: 32px;
+            text-align: center;
+            position: relative;
+            padding-bottom: 16px;
+        }
+
+        section h2::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 64px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--gold) 0%, var(--gold-soft) 100%);
+            border-radius: 999px;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 22px;
+        }
+
+        .summary-card,
+        .channel-card,
+        .metrics-table,
+        .charts-container,
+        .action-plan {
+            background: var(--white);
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            box-shadow: 0 16px 40px rgba(2, 6, 23, 0.06);
+        }
+
+        .summary-card {
+            padding: 28px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .summary-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--gold) 0%, var(--navy) 100%);
+        }
+
+        .summary-card h3 {
+            color: var(--navy);
+            margin-bottom: 12px;
+            font-size: 1.06rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .summary-card p {
+            color: var(--muted);
+            line-height: 1.75;
+        }
+
+        .stat-number {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--navy-deep);
+            margin-bottom: 8px;
+        }
+
+        .channels-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+        }
+
+        .channel-card {
+            padding: 24px;
+            text-align: center;
+        }
+
+        .channel-name {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--navy);
+            margin-bottom: 14px;
+        }
+
+        .channel-score {
+            display: flex;
+            justify-content: center;
+            margin: 16px 0;
+        }
+
+        .score-circle {
+            width: 96px;
+            height: 96px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--white);
+            box-shadow: inset 0 0 0 1px rgba(255,255,255,0.2);
+        }
+
+        .score-excellent { background: linear-gradient(135deg, var(--success) 0%, #115e59 100%); }
+        .score-good { background: linear-gradient(135deg, var(--blue) 0%, var(--navy) 100%); }
+        .score-medium { background: linear-gradient(135deg, var(--warning) 0%, #78350f 100%); }
+        .score-poor { background: linear-gradient(135deg, #a16207 0%, var(--danger) 100%); }
+
+        .channel-status {
+            color: var(--muted);
+            font-size: 0.95rem;
+            line-height: 1.75;
+        }
+
+        .charts-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            padding: 30px;
+        }
+
+        .chart-wrapper {
+            position: relative;
+            height: 320px;
+        }
+
+        .chart-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--navy);
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .swot-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .swot-card {
+            padding: 28px;
+            border-radius: 18px;
+            color: var(--white);
+            box-shadow: 0 16px 36px rgba(2, 6, 23, 0.1);
+        }
+
+        .swot-card h3 {
+            margin-bottom: 18px;
+            font-size: 1.18rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .swot-card ul {
+            list-style: none;
+        }
+
+        .swot-card li {
+            padding: 8px 0 8px 22px;
+            position: relative;
+            line-height: 1.6;
+        }
+
+        .swot-card li::before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: var(--gold-soft);
+            font-size: 1.15rem;
+        }
+
+        .strengths { background: linear-gradient(135deg, var(--navy) 0%, #1e293b 100%); }
+        .weaknesses { background: linear-gradient(135deg, #4b2b00 0%, #7c2d12 100%); }
+        .opportunities { background: linear-gradient(135deg, var(--blue) 0%, #213554 100%); }
+        .threats { background: linear-gradient(135deg, #6b3d00 0%, #9a2c2c 100%); }
+
+        .action-plan {
+            overflow: hidden;
+        }
+
+        .timeline-group {
+            padding: 28px;
+            border-left: 4px solid var(--gold);
+            background: linear-gradient(90deg, rgba(201, 162, 39, 0.08) 0%, rgba(255,255,255,0.9) 100%);
+        }
+
+        .timeline-group + .timeline-group {
+            border-top: 1px solid var(--line);
+        }
+
+        .timeline-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--navy);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .timeline-items {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+        }
+
+        .action-item {
+            background: var(--white);
+            padding: 18px;
+            border-radius: 14px;
+            border: 1px solid var(--line);
+        }
+
+        .action-title {
+            font-weight: 700;
+            color: var(--navy);
+            margin-bottom: 8px;
+        }
+
+        .action-description {
+            color: var(--muted);
+            font-size: 0.95rem;
+            margin-bottom: 10px;
+        }
+
+        .action-priority {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+        }
+
+        .priority-alta {
+            background: rgba(180, 83, 9, 0.12);
+            color: var(--danger);
+        }
+
+        .priority-media {
+            background: rgba(201, 162, 39, 0.14);
+            color: var(--warning);
+        }
+
+        .metrics-table {
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: linear-gradient(135deg, var(--navy) 0%, var(--blue) 100%);
+            color: var(--white);
+            padding: 14px 16px;
+            text-align: left;
+            font-weight: 700;
+        }
+
+        td {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--line);
+            color: var(--ink);
+        }
+
+        tr:hover {
+            background: #fbfaf6;
+        }
+
+        .cta-section {
+            background: linear-gradient(135deg, var(--navy-deep) 0%, var(--blue) 60%, var(--navy) 100%);
+            color: var(--white);
+            padding: 56px 32px;
+            border-radius: 22px;
+            text-align: center;
+            margin-bottom: 70px;
+            box-shadow: 0 20px 50px rgba(2, 6, 23, 0.16);
+        }
+
+        .cta-section h2 {
+            color: var(--white);
+            margin-bottom: 16px;
+        }
+
+        .cta-section h2::after {
+            background: linear-gradient(90deg, var(--gold) 0%, var(--gold-soft) 100%);
+        }
+
+        .cta-section p {
+            font-size: 1.02rem;
+            margin-bottom: 26px;
+            opacity: 0.94;
+            max-width: 720px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: var(--gold);
+            color: var(--navy-deep);
+            padding: 14px 32px;
+            border-radius: 999px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 10px 25px rgba(201, 162, 39, 0.2);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 14px 30px rgba(201, 162, 39, 0.25);
+        }
+
+        footer {
+            background: var(--navy-deep);
+            color: var(--white);
+            text-align: center;
+            padding: 28px 20px;
+            margin-top: 60px;
+            border-top: 1px solid rgba(255,255,255,0.08);
+        }
+
+        @media (max-width: 768px) {
+            header {
+                padding: 72px 20px 86px;
+            }
+
+            section {
+                margin: 56px 0;
+            }
+
+            .header-meta {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .charts-container {
+                padding: 20px;
+            }
+
+            .cta-section {
+                padding: 42px 20px;
+            }
+        }
+
+        .text-center { text-align: center; }
+        .mt-40 { margin-top: 40px; }
+        .mb-40 { margin-bottom: 40px; }
+    </style>
+</head>
+<body>
+    <!-- HEADER -->
+    <header>
+        <div class="container">
+            <h1><i class="fa-solid fa-scale-balanced"></i> Diagnóstico Estratégico de Presença Digital</h1>
+            <p>Syneos | Consultoria Tributária</p>
+            <div class="header-meta">
+                <span><i class="fa-solid fa-location-dot"></i> Curitiba, PR</span>
+                <span><i class="fa-solid fa-calendar-days"></i> Julho/2026</span>
+                <span><i class="fa-solid fa-briefcase"></i> B2B - Ticket Alto</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="container">
+        <!-- EXECUTIVE SUMMARY -->
+        <section>
+            <h2>Sumário Executivo</h2>
+            <div class="summary-grid">
+                <div class="summary-card">
+                    <h3><i class="fa-solid fa-award"></i> Reputação Forte</h3>
+                    <div class="stat-number">4.8★</div>
+                    <p>31 avaliações no Google Business com 93,5% de 5 estrelas. Ativo defensável e comprovado.</p>
+                </div>
+                <div class="summary-card">
+                    <h3><i class="fa-solid fa-coins"></i> Proposta de Valor</h3>
+                    <div class="stat-number">R$ 780M</div>
+                    <p>Em redução de passivos. Mensagem forte no Google e Instagram, mas ausente no site.</p>
+                </div>
+                <div class="summary-card">
+                    <h3><i class="fa-solid fa-sitemap"></i> Presença Multi-Canal</h3>
+                    <div class="stat-number">5 canais</div>
+                    <p>Google Business, Instagram (780 seguidores), Site, Facebook (inacessível) e WhatsApp.</p>
+                </div>
+                <div class="summary-card">
+                    <h3><i class="fa-solid fa-circle-exclamation"></i> Problema Central</h3>
+                    <div class="stat-number">Desconexão</div>
+                    <p>Ativos não conectados em máquina de conversão. Site é o elo mais fraco da cadeia.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHANNEL ANALYSIS -->
+        <section>
+            <h2>Análise por Canal</h2>
+            <div class="channels-grid">
+                <div class="channel-card">
+                    <div class="channel-name">Google Business</div>
+                    <div class="channel-score">
+                        <div class="score-circle score-excellent">8/10</div>
+                    </div>
+                    <div class="channel-status">
+                        ✓ Excelente reputação<br>
+                        ✓ NAP consistente<br>
+                        ⚠️ Reviews negativas sem resposta<br>
+                        ⚠️ Baixo volume relativo
+                    </div>
+                </div>
+
+                <div class="channel-card">
+                    <div class="channel-name">Instagram</div>
+                    <div class="channel-score">
+                        <div class="score-circle score-medium">5/10</div>
+                    </div>
+                    <div class="channel-status">
+                        ✓ Conteúdo técnico sólido<br>
+                        ⚠️ Frequência baixa (2-3/semana)<br>
+                        ⚠️ Reels sub-representados (~15%)<br>
+                        ⚠️ Genérico demais
+                    </div>
+                </div>
+
+                <div class="channel-card">
+                    <div class="channel-name">Site</div>
+                    <div class="channel-score">
+                        <div class="score-circle score-medium">5/10</div>
+                    </div>
+                    <div class="channel-status">
+                        ✓ Design limpo<br>
+                        ✓ Texto profissional<br>
+                        ⚠️ Hero sem CTA<br>
+                        ⚠️ 6 links quebrados
+                    </div>
+                </div>
+
+                <div class="channel-card">
+                    <div class="channel-name">Facebook</div>
+                    <div class="channel-score">
+                        <div class="score-circle score-poor">1/10</div>
+                    </div>
+                    <div class="channel-status">
+                        ✗ Página inacessível<br>
+                        ✗ Conteúdo não carrega<br>
+                        ✗ Risco reputacional<br>
+                        ⚠️ Ainda visitado por leads
+                    </div>
+                </div>
+
+                <div class="channel-card">
+                    <div class="channel-name">Consistência</div>
+                    <div class="channel-score">
+                        <div class="score-circle score-medium">5/10</div>
+                    </div>
+                    <div class="channel-status">
+                        ✓ Google ↔ Instagram<br>
+                        ⚠️ Site ≠ Outros canais<br>
+                        ⚠️ Proposta de valor diverge<br>
+                        ⚠️ Mensagem inconsistente
+                    </div>
+                </div>
+
+                <div class="channel-card">
+                    <div class="channel-name">Jornada Cliente</div>
+                    <div class="channel-score">
+                        <div class="score-circle score-poor">4.5/10</div>
+                    </div>
+                    <div class="channel-status">
+                        ✓ Bom no início (Google)<br>
+                        ⚠️ Piora no meio (Site)<br>
+                        ⚠️ Confiança reduzida<br>
+                        ✗ Perde força na decisão
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VISUALIZATIONS -->
+        <section>
+            <h2>Visualização de Dados</h2>
+            <div class="charts-container">
+                <div>
+                    <div class="chart-title">Distribuição de Avaliações Google (31 total)</div>
+                    <div class="chart-wrapper">
+                        <canvas id="reviewsChart"></canvas>
+                    </div>
+                </div>
+                <div>
+                    <div class="chart-title">Performance por Canal (0-10)</div>
+                    <div class="chart-wrapper">
+                        <canvas id="channelsChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- METRICS TABLE -->
+        <section>
+            <h2>Métricas Detalhadas</h2>
+            <div class="metrics-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Canal</th>
+                            <th>Métrica Chave</th>
+                            <th>Valor Atual</th>
+                            <th>Benchmark Ideal</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Google Business</strong></td>
+                            <td>Total de Avaliações</td>
+                            <td>31</td>
+                            <td>60+</td>
+                            <td><span style="color: var(--warning);">⚠️ Abaixo</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Google Business</strong></td>
+                            <td>Nota Média</td>
+                            <td>4.8★</td>
+                            <td>4.5★+</td>
+                            <td><span style="color: var(--success);">✓ Excelente</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Instagram</strong></td>
+                            <td>Frequência Semanal</td>
+                            <td>2-3 posts</td>
+                            <td>7+ posts</td>
+                            <td><span style="color: var(--danger);">✗ Crítico</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Instagram</strong></td>
+                            <td>% de Reels</td>
+                            <td>~15%</td>
+                            <td>50-70%</td>
+                            <td><span style="color: var(--danger);">✗ Crítico</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Instagram</strong></td>
+                            <td>Seguidores</td>
+                            <td>780</td>
+                            <td>1500+ (6 meses)</td>
+                            <td><span style="color: var(--warning);">⚠️ Abaixo</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Site</strong></td>
+                            <td>Links Funcionais</td>
+                            <td>89%</td>
+                            <td>100%</td>
+                            <td><span style="color: var(--warning);">⚠️ Bugs</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Site</strong></td>
+                            <td>CTA na Hero</td>
+                            <td>0</td>
+                            <td>1+</td>
+                            <td><span style="color: var(--danger);">✗ Crítico</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Facebook</strong></td>
+                            <td>Acessibilidade</td>
+                            <td>Bloqueado</td>
+                            <td>Funcional</td>
+                            <td><span style="color: var(--danger);">✗ Crítico</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- SWOT ANALYSIS -->
+        <section>
+            <h2>Análise SWOT</h2>
+            <div class="swot-grid">
+                <div class="swot-card strengths">
+                    <h3><i class="fa-solid fa-shield-halved"></i> Forças</h3>
+                    <ul>
+                        <li>Reputação Google muito forte (4.8★)</li>
+                        <li>Autoridade técnica genuína em Reforma Tributária</li>
+                        <li>Sócios visíveis com LinkedIn público</li>
+                        <li>Especialização setorial (Agro, Saúde, Varejo)</li>
+                        <li>Proposta de valor quantificável (R$ 780M)</li>
+                    </ul>
+                </div>
+                <div class="swot-card weaknesses">
+                    <h3><i class="fa-solid fa-triangle-exclamation"></i> Fraquezas</h3>
+                    <ul>
+                        <li>Site sem formulário e sem prova social</li>
+                        <li>Facebook inacessível (canal morto)</li>
+                        <li>Mensagem de valor inconsistente entre canais</li>
+                        <li>Instagram cresce lentamente com frequência baixa</li>
+                        <li>Reels sub-representados (~15%)</li>
+                        <li>Sem automação no WhatsApp</li>
+                    </ul>
+                </div>
+                <div class="swot-card opportunities">
+                    <h3><i class="fa-solid fa-arrow-trend-up"></i> Oportunidades</h3>
+                    <ul>
+                        <li>Setor pouco sofisticado digitalmente em Curitiba</li>
+                        <li>Reforma Tributária gerará tráfego nos próximos 2-3 anos</li>
+                        <li>Blog/SEO praticamente inexplorado</li>
+                        <li>Baixa concorrência de conteúdo por localidade</li>
+                        <li>LinkedIn como canal B2B não explorado</li>
+                    </ul>
+                </div>
+                <div class="swot-card threats">
+                    <h3><i class="fa-solid fa-balance-scale"></i> Ameaças</h3>
+                    <ul>
+                        <li>Descompasso site/marca piora com crescimento</li>
+                        <li>Dependência de WhatsApp sem automação</li>
+                        <li>Reviews negativas sem resposta se acumulam</li>
+                        <li>Escritórios de contabilidade como concorrência</li>
+                        <li>Captura de tráfego orgânico não explorada</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- ACTION PLAN -->
+        <section>
+            <h2>Plano de Ação Priorizado</h2>
+            <div class="action-plan">
+                <div class="timeline-group">
+                    <div class="timeline-title"><i class="fa-solid fa-bolt"></i> Ganhos Rápidos (0-30 dias)</div>
+                    <div class="timeline-items">
+                        <div class="action-item">
+                            <div class="action-title">Responder avaliações negativas</div>
+                            <div class="action-description">Protege reputação, sinaliza cuidado com cliente insatisfeito</div>
+                            <span class="action-priority priority-alta">Alta</span>
+                        </div>
+                        <div class="action-item">
+                            <div class="action-title">Investigar Facebook</div>
+                            <div class="action-description">Checar Meta Business Suite e recuperar ou desligar</div>
+                            <span class="action-priority priority-alta">Alta</span>
+                        </div>
+                        <div class="action-item">
+                            <div class="action-title">CTA na Hero do site</div>
+                            <div class="action-description">Adicionar botão de WhatsApp na primeira dobra</div>
+                            <span class="action-priority priority-alta">Alta</span>
+                        </div>
+                        <div class="action-item">
+                            <div class="action-title">Unificar proposta de valor</div>
+                            <div class="action-description">Trazer "R$ 780 milhões" para o Hero do site</div>
+                            <span class="action-priority priority-alta">Alta</span>
+                        </div>
+                        <div class="action-item">
+                            <div class="action-title">Corrigir links quebrados</div>
+                            <div class="action-description">6 cards de serviço + 1 WhatsApp sem formatação</div>
+                            <span class="action-priority priority-alta">Alta</span>
+                        </div>
+                        <div class="action-item">
+                            <div class="action-title">Google Posts semanais</div>
+                            <div class="action-description">Reaproveitando carrosséis do Instagram</div>
+                            <span class="action-priority priority-media">Média</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-group">
+                    <div class="timeline-title"><i class="fa-solid fa-chart-line"></i> Médio Prazo (30-90 dias)</div>
+                    <div class="timeline-items">
+                        <div class="action-item">
+                            <div class="action-title">Construir formulário de contato</div>
+                            <div class="action-description">Criar via de conversão para quem não quer WhatsApp</div>
+                            <span class="action-priority priority-alta">Alta</span>
+                        </div>
+                        <div class="action-item">
+                            <div class="action-title">Aumentar frequência Instagram</div>
+                            <div class="action-description">De 2-3/semana para 1/dia; inverter proporção de Reels</div>
+                            <span class="action-priority priority-alta">Alta</span>
+                        </div>
+                        <div class="action-item">
+                            <div class="action-title">Recortar por vertical</div>
+                            <div class="action-description">Conteúdo específico para Agro/Saúde/Varejo, não genérico</div>
+                            <span class="action-priority priority-alta">Alta</span>
+                        </div>
+                        <div class="action-item">
+                            <div class="action-title">Schema + Open Graph</div>
+                            <div class="action-description">Melhorar meta description e rich snippets</div>
+                            <span class="action-priority priority-media">Média</span>
+                        </div>
+                        <div class="action-item">
+                            <div class="action-title">Rotina de reviews</div>
+                            <div class="action-description">Pedido sistemático pós-atendimento; meta: 60+ em 6 meses</div>
+                            <span class="action-priority priority-media">Média</span>
+                        </div>
+                        <div class="action-item">
+                            <div class="action-title">LinkedIn ativo</div>
+                            <div class="action-description">Criar perfil empresa + sócios; canal B2B não explorado</div>
+                            <span class="action-priority priority-media">Média</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-group">
+                    <div class="timeline-title">🎯 Longo Prazo (90+ dias)</div>
+                    <div class="timeline-items">
+                        <div class="action-item">
+                            <div class="action-title">Blog com SEO</div>
+                            <div class="action-description">Conteúdo pilar: Reforma Tributária, Simples Nacional, verticais</div>
+                            <span class="action-priority priority-alta">Alta</span>
+                        </div>
+                        <div class="action-item">
+                            <div class="action-title">Automação WhatsApp</div>
+                            <div class="action-description">Qualificação básica antes do humano; reduz dependência</div>
+                            <span class="action-priority priority-media">Média</span>
+                        </div>
+                        <div class="action-item">
+                            <div class="action-title">Cases nomeados</div>
+                            <div class="action-description">Prova social específica por segmento (com autorização)</div>
+                            <span class="action-priority priority-media">Média</span>
+                        </div>
+                        <div class="action-item">
+                            <div class="action-title">Programa de indicação</div>
+                            <div class="action-description">Parceria com escritórios de contabilidade; canal recorrente</div>
+                            <span class="action-priority priority-media">Média</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- KEY FINDINGS -->
+        <section>
+            <h2>Conclusões Principais</h2>
+            <div class="summary-grid">
+                <div class="summary-card" style="border-left-color: var(--danger);">
+                    <h3>❌ O Problema Raiz</h3>
+                    <p>Infraestrutura de conversão desconectada de uma marca que funciona. Google confia, Instagram é sólido, mas o site (ponto de prova) é o elo mais fraco.</p>
+                </div>
+                <div class="summary-card" style="border-left-color: var(--warning);">
+                    <h3>🔧 Não é Criatividade</h3>
+                    <p>A Syneos não precisa de mais conteúdo. Precisa de (1) consertar bugs técnicos, (2) aumentar frequência e mudar formato, e (3) unificar a mensagem.</p>
+                </div>
+                <div class="summary-card" style="border-left-color: var(--success);">
+                    <h3>✅ Oportunidade Real</h3>
+                    <p>O setor em Curitiba é pouco sofisticado digitalmente. Ganhos de presença custam pouco e rendem posição de destaque relativamente rápido.</p>
+                </div>
+                <div class="summary-card" style="border-left-color: var(--secondary);">
+                    <h3>📊 Próximo Passo</h3>
+                    <p>Executar os ganhos rápidos (0-30 dias) em paralelo: site + Google + Instagram. Depois, estruturar SEO e conteúdo para captura orgânica.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA SECTION -->
+        <section class="cta-section">
+            <h2>Pronto para Transformar a Presença Digital?</h2>
+            <p>Este diagnóstico identifica os problemas. O próximo passo é a execução estratégica de cada recomendação, alinhada com o cronograma de prioridade.</p>
+            <button class="cta-button" onclick="abrirWhatsApp()">💬 Agendar Consultoria</button>
+        </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer>
+        <p>&copy; 2026 Diagnóstico Estratégico de Presença Digital | Syneos Consultoria Tributária</p>
+        <p style="margin-top: 10px; opacity: 0.8;">Curitiba, PR | Especialização em Agro, Saúde e Varejo</p>
+    </footer>
+
+    <script>
+        // Chart.js - Google Reviews Distribution
+        const ctx1 = document.getElementById('reviewsChart').getContext('2d');
+        new Chart(ctx1, {
+            type: 'doughnut',
+            data: {
+                labels: ['5 Estrelas', '2 Estrelas', '1 Estrela'],
+                datasets: [{
+                    data: [29, 1, 1],
+                    backgroundColor: [
+                        '#10b981',
+                        '#f59e0b',
+                        '#dc2626'
+                    ],
+                    borderColor: 'white',
+                    borderWidth: 3
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 15,
+                            font: { size: 14 }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Chart.js - Channel Performance
+        const ctx2 = document.getElementById('channelsChart').getContext('2d');
+        new Chart(ctx2, {
+            type: 'radar',
+            data: {
+                labels: ['Google', 'Instagram', 'Site', 'Facebook', 'Consistência', 'Jornada'],
+                datasets: [{
+                    label: 'Score Atual',
+                    data: [8, 5, 5, 1, 5, 4.5],
+                    borderColor: '#3b82f6',
+                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                    borderWidth: 2,
+                    pointRadius: 5,
+                    pointBackgroundColor: '#3b82f6',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                scales: {
+                    r: {
+                        beginAtZero: true,
+                        max: 10,
+                        ticks: {
+                            stepSize: 2
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+
+        // WhatsApp Button
+        function abrirWhatsApp() {
+            const mensagem = "Olá! Gostaria de agendar uma consultoria sobre o diagnóstico de presença digital.";
+            const telefone = "5541999999999"; // Substituir pelo número real
+            const url = `https://wa.me/${telefone}?text=${encodeURIComponent(mensagem)}`;
+            window.open(url, '_blank');
+        }
+
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
